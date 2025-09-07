@@ -14,6 +14,9 @@ version: "3"
 # to spin up 4 containers we define 4 services.
 services:
 
+#--------------------------------------------------------------------------------------------
+# Server service
+#--------------------------------------------------------------------------------------------
   # name of the service
   backend_apis:
     # now either we can define the name of the image that we want our service to use like
@@ -92,7 +95,9 @@ services:
     # env_file:
         # - <filename> #eg. ./.env
   
-
+#------------------------------------------------------------------------------------
+# Postgres database service
+#------------------------------------------------------------------------------------
     # Now, we will setup a docker container for our postgres database. 
     # Let's define our postgres database service:
   postgres_database:
@@ -116,6 +121,9 @@ services:
     volumes:
       - postgres-db:/var/lib/postgresql/data # <volume-name>:<path-in-the-container-where-postgres-will-write-to>
 
+#-------------------------------------------------------------------------------------
+# Volumes
+#-------------------------------------------------------------------------------------
 # This will take the data from the path postgres container used and paste it in docker managed local path 
 # in Docker’s internal storage, usually under /var/lib/docker/volumes/ on Linux
 # If we stop, restart, or even delete the postgres_database container, the postgres-db volume remains intact.
@@ -125,9 +133,9 @@ volumes:
 
 
 
-
+#--------------------------------------------------------------------------------------
 # docker-compose commands:
-# 
+#-------------------------------------------------------------------------------------- 
 # > docker compose up -d # run the docker-compose file and create all the services in
 #                        # detached mode, this will build the image if the image is 
 #                        # already created previously it will not recrete it.
@@ -145,3 +153,18 @@ volumes:
 #
 # Now to access our endpoints, just request on localhost:port to access it
 #
+#---------------------------------------------------------------------------------------
+# Creating docker repository on docker-hub
+#---------------------------------------------------------------------------------------
+# Step1: Create a public repo on docker hub
+#
+# Step2: Login using cli and use your creds
+# > docker login 
+#
+# Step3: Push to your created repo using the docker required naming convention
+# > docker push <your-account-name>/<repo-name>:[optional-tag-name]
+#   If your image name is not as the docker expected convention rename it as and push again:
+#   > docker image tag backend_apis DockerUserName/backend_apis # it copies the image and renames for us
+#
+# Step4: Now we can pull this image from wherever we wish to with:
+# > docker pull <DockerUserName>/<repo-name>
