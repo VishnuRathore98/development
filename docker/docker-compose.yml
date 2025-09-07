@@ -55,6 +55,22 @@ services:
       #
       # - <port-on-host>:<port-on-container>
       - 8000:8000
+    
+    # Setting up bind-mount:
+    # Bind-mount is a special volume because it allows us to sync a folder on our local machine 
+    # to a folder in our container. So whatever changes that we will make in our local folder
+    # will be reflected in our container. 
+    volumes:
+      # <local-folder>:<folder-in-container>:<access>
+      - ./:/usr/src/app:ro
+    
+    # The following command will override the CMD in docker file that runs our fastapi server 
+    # since now we want to work in development and see our changes immediately we add the 
+    # follwing command to override one in dockerfile, this will reload the server everytime 
+    # a change is made locally which will be reflected on the container using the bind-mount
+    # method.
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload   
+
 
     # Setting up the environment variables related to our project, we have two options 
     # for Setting environment variables:
