@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+
+  backend_apis:
+    # We will not build the image in production we will directly pull from docker-hub image
+    image: <DockerUserName>/<repo-name>
+
+    depends_on:
+      - postgres_database
+
+    container_name: apis
+
+    ports:
+      - 80:8000 # We will now listen from port 80 of the host machine
+    
+    environment:
+      # We will not define our environment variables, we will use the path variables 
+      - DATABASE_HOSTNAME=${DATABASE_HOSTNAME}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+
+  postgres_database:
+    # We will use the official postgres image
+    image: postgres
+
+    # We will use the system environment variables for our database, these will be used
+    # by docker to setup our postgres database:
+    environment:
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
+
+    volumes:
+      - postgres-db:/var/lib/postgresql/data # <volume-name>:<path-in-the-container-where-postgres-will-write-to>
+
+volumes:
+  postgres-db:
