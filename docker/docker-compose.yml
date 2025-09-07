@@ -24,6 +24,17 @@ services:
     # docker-compose will automatically build our image if it doesnt exists.
     # build: <path-to-dockerfile>
     build: .
+    
+    # As our apis depends on our postgres database, we can mention it here the name of the
+    # services our backend_apis service depends on, so before running our backend_apis service
+    # our postgres_database service will be executed first, and start the postgres_database 
+    # container.
+    # So this will tell the docker that I want to start the postgres_database container before
+    # my backend_apis container starts.
+    # NOTE:: As postgres instance may take time to load up put checks inside your code to handle 
+    # that.
+    depends_on:
+      - postgres_database
 
     # We can mention the name to give to our container
     container_name: apis
@@ -52,7 +63,7 @@ services:
     # environment:
         # - <name>: <value>
     environment:
-      - DATABASE_HOSTNAME=postgres 
+      - DATABASE_HOSTNAME=postgres_database 
       - DATABASE_PORT=5432
       - DATABASE_PASSWORD=password123 
       - DATABASE_NAME=mydb
@@ -64,6 +75,39 @@ services:
     # using a environment variables file, by mentioning its path
     # env_file:
         # - <filename> #eg. ./.env
+  
+
+    # Now, we will setup a docker container for our postgres database. 
+    # Let's define our postgres database service:
+    postgres_database:
+      # We will use the official postgres image
+      image: postgres
+
+      # We have to define some environment variables for our database, these will be used
+      # by docker to setup our postgres database:
+      environment:
+        - POSTGRES_PASSWORD=password123
+        - POSTGRES_DB=mydb
+
+      # Data persistence for postgres
+      # To persist our data, such that it does not get deleted when the container is terminated
+      # we need to use volumes, that's what allows us to save data from our container to our local
+      # machine. So that if we kill a container we can spin up a new container and point that to
+      # those files. 
+      # There are difference kinds of volumes that we can use in docker, like Anonymous volumes,
+      # named volumes, bind-mount volumes. 
+      # We will use named volumes.
+      volumes:
+        - postgres-db:/var/lib/postgresql/data # <volume-name>:<path-in-the-container-where-postgres-will-write-to>
+
+# This will take the data from the path postgres container used and paste it in docker managed local path 
+# in Docker’s internal storage, usually under /var/lib/docker/volumes/ on Linux
+# If we stop, restart, or even delete the postgres_database container, the postgres-db volume remains intact.
+# when we spin up a new container with the same volume, Postgres finds its old data and continues as if nothing happened.
+volumes:
+  postgres-db:
+
+
 
 
 # docker-compose commands:
