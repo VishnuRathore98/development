@@ -37,6 +37,9 @@ CMD ["uvicorn","app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 # > docker build -t <image-tag> <path-to-dockerfile> 
 # > docker build -t app_backend .
 
+# Start the container from our new image
+# > docker run myapp
+
 # To check all the available images:
 # > docker image ls
 
