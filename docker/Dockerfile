@@ -43,4 +43,8 @@ CMD ["uvicorn","app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 # To check all the available images:
 # > docker image ls
 
+# To get an interactive session into our container by overwriting the default 
+# "uvicorn app.main:app --host 0.0.0.0 --port 8000"
+# > docker exec -it <container-name> bash 
+
 # Let's use docker-compose to run and configure out docker commands.
