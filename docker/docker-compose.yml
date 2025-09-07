@@ -1,0 +1,87 @@
+# We can run a whole bunch of docker commands and specify the options, params and images
+# that we want to run manually, to automate all of these steps of creating images from
+# dockerfiles, building containers using those images and many more we can use 
+# docker-compose.
+# We can create multiple containers all at once and tear them down when not needed all 
+# at once, using a single command.
+
+# Defining docker-compose version to use for specific features, if we dont mention this 
+# it will use the most recent version by default.
+version: "3"
+
+# Now we will define a service, which is a docker container we want to work on, so if we
+# want docker-compose to spin up a container we define a service. If we want docker-compose
+# to spin up 4 containers we define 4 services.
+services:
+
+  # name of the service
+  backend_apis:
+    # now either we can define the name of the image that we want our service to use like
+    # python image that we have already defined inside our docker file,
+    # image: <image-name> # eg. image: python
+
+    # or we can do the build which will build our image from the dockerfile, so the 
+    # docker-compose will automatically build our image if it doesnt exists.
+    # build: <path-to-dockerfile>
+    build: .
+
+    # We can mention the name to give to our container
+    container_name: apis
+
+    # Now we will specify the port that we want to open up so that the outside world can 
+    # reach out to our container but remember our container is running inside another 
+    # system i.e. server so we have to mention how the container talks with the requests
+    # we receive at the server.
+    ports:
+      # Now we need to mention how the connection will be established between our host
+      # machine and our container, i.e. when we receive requests on this, port-on-host
+      # redirect that to this, port-on-container.
+      #
+      # port-on-container: whatever port our application is running on eg. 8000
+      # port-on-host: could be any port our host machine is listening for our requests
+      # from the outside world eg. 80,43,443 or 8000(in case we are using services like
+      # ngnix to handle the outside requests)
+      #
+      # - <port-on-host>:<port-on-container>
+      - 8000:8000
+
+    # Setting up the environment variables related to our project, we have two options 
+    # for Setting environment variables:
+    #
+    # manually Setting each environment variable and its value 
+    # environment:
+        # - <name>: <value>
+    environment:
+      - DATABASE_HOSTNAME=postgres 
+      - DATABASE_PORT=5432
+      - DATABASE_PASSWORD=password123 
+      - DATABASE_NAME=mydb
+      - DATABASE_USERNAME=postgres
+      - SECRET_KEY=098ASDF8A709SD7F986A8D67F98ADS7F098789BU09FHDG890HJ8JHGKJK354HJ
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+    # using a environment variables file, by mentioning its path
+    # env_file:
+        # - <filename> #eg. ./.env
+
+
+# docker-compose commands:
+# 
+# > docker compose up -d # run the docker-compose file and create all the services in
+#                        # detached mode, this will build the image if the image is 
+#                        # already created previously it will not recrete it.
+#                        # if we had made changes to our dockerfile and we want it to
+#                        # build the new image we can use the --build flag to explicitly
+#                        # command it to build the new image
+# 
+# > docker image ls # this will list all the available docker images 
+#
+# > docker ps # this will list all the running containers
+# > docker ps -a # this will list all the avaibale containers running or not
+#
+# > docker compose down # to tear down everything
+#
+#
+# Now to access our endpoints, just request on localhost:port to access it
+#
