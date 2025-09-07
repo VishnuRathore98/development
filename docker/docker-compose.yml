@@ -79,26 +79,26 @@ services:
 
     # Now, we will setup a docker container for our postgres database. 
     # Let's define our postgres database service:
-    postgres_database:
-      # We will use the official postgres image
-      image: postgres
+  postgres_database:
+    # We will use the official postgres image
+    image: postgres
 
-      # We have to define some environment variables for our database, these will be used
-      # by docker to setup our postgres database:
-      environment:
-        - POSTGRES_PASSWORD=password123
-        - POSTGRES_DB=mydb
+    # We have to define some environment variables for our database, these will be used
+    # by docker to setup our postgres database:
+    environment:
+      - POSTGRES_PASSWORD=password123
+      - POSTGRES_DB=mydb
 
-      # Data persistence for postgres
-      # To persist our data, such that it does not get deleted when the container is terminated
-      # we need to use volumes, that's what allows us to save data from our container to our local
-      # machine. So that if we kill a container we can spin up a new container and point that to
-      # those files. 
-      # There are difference kinds of volumes that we can use in docker, like Anonymous volumes,
-      # named volumes, bind-mount volumes. 
-      # We will use named volumes.
-      volumes:
-        - postgres-db:/var/lib/postgresql/data # <volume-name>:<path-in-the-container-where-postgres-will-write-to>
+    # Data persistence for postgres
+    # To persist our data, such that it does not get deleted when the container is terminated
+    # we need to use volumes, that's what allows us to save data from our container to our local
+    # machine. So that if we kill a container we can spin up a new container and point that to
+    # those files. 
+    # There are difference kinds of volumes that we can use in docker, like Anonymous volumes,
+    # named volumes, bind-mount volumes. 
+    # We will use named volumes.
+    volumes:
+      - postgres-db:/var/lib/postgresql/data # <volume-name>:<path-in-the-container-where-postgres-will-write-to>
 
 # This will take the data from the path postgres container used and paste it in docker managed local path 
 # in Docker’s internal storage, usually under /var/lib/docker/volumes/ on Linux
