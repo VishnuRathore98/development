@@ -1,0 +1,97 @@
+Alembic is a database migration tool for SQLAlchemy. 
+It helps you manage schema changes (like creating tables, adding columns, altering constraints) in a version-controlled way.
+
+1. What Alembic Does
+
+Alembic is for migrations, not ORM models themselves.
+
+SQLAlchemy models define your schema in Python.
+
+Alembic manages incremental changes to that schema in your actual database.
+
+Think of it like Git for database structure.
+
+2. Installation
+
+> pip install alembic
+
+
+3. Setup in a Project
+
+From your project root:
+
+> alembic init alembic
+
+
+This creates:
+
+  alembic.ini → main config file (points to your DB).
+
+  alembic/ → migrations folder with:
+
+  env.py → script that ties Alembic to SQLAlchemy.
+
+  versions/ → stores migration files.
+
+
+4. Configure Database URL
+
+In alembic.ini, set your DB connection string:
+
+> sqlalchemy.url = postgresql+psycopg2://user:password@localhost/mydb
+
+
+If you want it dynamic (using models from your app), you edit alembic/env.py to import your Base (from declarative_base) and set target_metadata.
+
+
+5. Creating Your First Migration
+
+Run:
+
+> alembic revision -m "create users table"
+
+
+This creates a file in alembic/versions/ with upgrade() and downgrade() functions.
+
+Example migration:
+
+> from alembic import op
+> import sqlalchemy as sa
+> 
+> def upgrade():
+>     op.create_table(
+>         'users',
+>         sa.Column('id', sa.Integer, primary_key=True),
+>         sa.Column('name', sa.String(50), nullable=False),
+>     )
+> 
+> def downgrade():
+>     op.drop_table('users')
+
+
+6. Applying Migrations
+
+To apply all outstanding migrations:
+
+> alembic upgrade head
+
+
+To roll back one migration:
+
+> alembic downgrade -1
+
+
+7. Autogenerate Migrations (with SQLAlchemy models)
+
+If you use SQLAlchemy ORM, Alembic can detect changes automatically. In env.py, enable target_metadata:
+
+> from myapp.models import Base
+> target_metadata = Base.metadata
+
+
+Then generate:
+
+> alembic revision --autogenerate -m "added email to users"
+
+
+Alembic inspects your models vs. the database and writes the migration for you.
